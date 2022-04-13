@@ -46,7 +46,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,) # разобраться с рейтингом
 
-#    def rating(self): # надо добыть средний рейтинг для произведения?
+#    def rating(self): 
 #        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
 #        titlelist = title.reviews.all().values('score')
 #        title_avg = statistics.mean(titlelist)
