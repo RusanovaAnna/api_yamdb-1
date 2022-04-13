@@ -39,19 +39,10 @@ class GenreViewSet(
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
-#        middle_star=models.Sum(models.F('score'))/models.Count(models.F('score'))
-#        avg('reviews__score')
         Avg('reviews__score')
     ).order_by('name')
     serializer_class = TitleSerializer
-    permission_classes = (IsAdminOrReadOnly,) # разобраться с рейтингом
-
-#    def rating(self): 
-#        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-#        titlelist = title.reviews.all().values('score')
-#        title_avg = statistics.mean(titlelist)
-#        list_avg = round(title_avg, 1)
-#        return list_avg
+    permission_classes = (IsAdminOrReadOnly,) 
 
 
 class UserViewSet(
