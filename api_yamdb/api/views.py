@@ -1,11 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, status
+from rest_framework.response import Response
+
 from reviews.models import Category, Genre, Review, Title, User
 from .permissions import (IsAdminOrReadOnly, 
                           IsAdminModeratorAuthorOrReadOnly, IsAdmin,)
-from .serializers import (CommentSerializer, ReviewSerializer, UserSerializer)
+from .serializers import (CommentSerializer, ReviewSerializer, UserSerializer,
+                          CategorySerializer)
 
 
 class CategoryViewSet(
@@ -15,6 +18,7 @@ class CategoryViewSet(
     viewsets.GenericViewSet,
     ):
     queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
 
 
@@ -30,7 +34,7 @@ class GenreViewSet(
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,) # разобраться с рейтингом
     
 
 class UserViewSet(
@@ -42,8 +46,13 @@ class UserViewSet(
     queryset = User.objects.all()
     permission_classes = (IsAdmin,)
     serializer_class = UserSerializer
+    ...
 
-    def user_profile():
+    def user_profile(self, request):
+        user = request.user
+        if request.method == "GET":
+            ...
+            return Response(status=status.HTTP_200_OK)
         ...
 
 
