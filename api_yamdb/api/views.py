@@ -98,15 +98,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         review_id = self.kwargs.get('review_id')
         review = get_object_or_404(Review, id=review_id, title=title_id)
         serializer.save(author=self.request.user, review=review)
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def register(request):
-    ...
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def get_jwt_token(request):
-    ...
