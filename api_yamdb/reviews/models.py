@@ -10,8 +10,12 @@ SYMBOLS_LIMIT = 15
 
 
 class User(AbstractUser):
+    # password = None
+    last_login = None
+    date_joined = None
     role = models.CharField(max_length=20)
     bio = models.TextField(blank=True)
+    confirmation_code = models.TextField(blank=True, null=True)
 
 
 class Genre(models.Model):
@@ -35,6 +39,7 @@ class Title(models.Model):
     year = models.PositiveSmallIntegerField(
         validators=[MaxValueValidator(datetime.datetime.now().year)]
     )
+    description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
         null=True, related_name='titles_cats')
@@ -69,8 +74,8 @@ class Review(models.Model):
 
 
 class GenreTitle(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.title} {self.genre}'
