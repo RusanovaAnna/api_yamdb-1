@@ -1,11 +1,7 @@
-from audioop import avg
-import statistics
-from django.db import models
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view, permission_classes, status, action
+from rest_framework.decorators import status, action
 from rest_framework.response import Response
 
 from reviews.models import Category, Genre, Review, Title, User
