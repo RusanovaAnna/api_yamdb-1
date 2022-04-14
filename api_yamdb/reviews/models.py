@@ -10,10 +10,18 @@ SYMBOLS_LIMIT = 15
 
 
 class User(AbstractUser):
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    USER = 'user'
+    ROLES = [
+        (ADMIN, 'Admin'),
+        (MODERATOR, 'Moderator'),
+        (USER, 'User'),
+    ]
     # password = None
     last_login = None
     date_joined = None
-    role = models.CharField(max_length=20)
+    role = models.CharField(max_length=20, choices=ROLES)
     bio = models.TextField(blank=True)
     confirmation_code = models.TextField(blank=True, null=True)
 

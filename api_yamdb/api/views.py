@@ -4,7 +4,7 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny # IsAdminUser
 from rest_framework.response import Response
 # from rest_framework_simplejwt.views import TokenObtainPairView
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -94,13 +94,13 @@ class UserViewSet(
         user = request.user
         if request.method == 'GET':
             serializer = UserSerializer(user) # может можно по-другому
-            return Response(status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         if request.method == 'PATCH':
             serializer = UserSerializer(user, data=request.data, partial=True)
             serializer.is_valid()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -113,7 +113,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return queryset_new
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
