@@ -12,7 +12,7 @@ router_version_1.register(r'genres', GenreViewSet)
 router_version_1.register(r'titles', TitleViewSet)
 router_version_1.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
-router_version_1.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
+router_version_1.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)' #review_ttl
                 r'/comments', CommentViewSet, basename='comments')
 router_version_1.register(r'users', UserViewSet)
 
