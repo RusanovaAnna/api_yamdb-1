@@ -62,19 +62,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    # name = serializers.CharField(required=True,)
-    # slug = serializers.SlugField()
+    name = serializers.CharField(required=True,)
+    slug = serializers.SlugField()
 
     class Meta:
         model = Category
+        fields = '__all__'
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    # name = serializers.CharField(required=True,)
-    # slug = serializers.SlugField()
+    name = serializers.CharField(required=True,)
+    slug = serializers.SlugField()
 
     class Meta:
         model = Genre
+        fields = '__all__'
 
 
 class TitleSerializer(serializers.ModelSerializer):

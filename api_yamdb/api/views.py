@@ -97,7 +97,7 @@ class UserViewSet(
             return Response(serializer.data, status=status.HTTP_200_OK)
         if request.method == 'PATCH':
             serializer = UserSerializer(user, data=request.data, partial=True)
-            serializer.is_valid()
+            serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -109,7 +109,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-        queryset_new = title.review_ttl.all()
+        queryset_new = title.reviews.all()
         return queryset_new
 
     def perform_create(self, serializer):

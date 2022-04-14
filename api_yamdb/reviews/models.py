@@ -21,7 +21,7 @@ class User(AbstractUser):
     # password = None
     last_login = None
     date_joined = None
-    role = models.CharField(max_length=20, choices=ROLES)
+    role = models.CharField(max_length=20, choices=ROLES, default=USER)
     bio = models.TextField(blank=True)
     confirmation_code = models.TextField(blank=True, null=True)
 
@@ -59,10 +59,10 @@ class Title(models.Model):
 
 class Review(models.Model):
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='review_ttl')
+        Title, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='review_auth')
+        User, on_delete=models.CASCADE, related_name='reviews')
     score = models.PositiveSmallIntegerField(
         validators=[
             MaxValueValidator(MAX_SCORE),
@@ -90,7 +90,10 @@ class GenreTitle(models.Model):
 
 
 class Comment(models.Model):
-    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments')
     text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comment_auth')
