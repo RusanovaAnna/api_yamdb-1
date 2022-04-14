@@ -62,8 +62,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    name = serializers.CharField(required=True,)
-    slug = serializers.SlugField()
 
     class Meta:
         model = Category
@@ -71,8 +69,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(required=True,)
-    slug = serializers.SlugField()
 
     class Meta:
         model = Genre

@@ -50,7 +50,7 @@ class Title(models.Model):
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
-        null=True, related_name='titles_cats')
+        null=True, related_name='titles')
     genre = models.ManyToManyField(Genre, through='GenreTitle')
 
     def __str__(self):
@@ -96,7 +96,7 @@ class Comment(models.Model):
         related_name='comments')
     text = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comment_auth')
+        User, on_delete=models.CASCADE, related_name='comments')
     pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
