@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from reviews.models import Comment, Review, User, Category, Title, Genre
@@ -12,6 +13,24 @@ class GetTokenSerializer(serializers.ModelSerializer):
 
 
 class GetConfirmationCode(serializers.ModelSerializer):
+    username = serializers.CharField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+    email = serializers.EmailField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+
+    def validate_username(self, val):
+        if 'me' in val.lower():
+            raise serializers.ValidationError()
+        return val
+        #user = User.query.filter_by(username='me').first()
+        #if user:
+        #    raise serializers.ValidationError()
 
     class Meta:
         fields = ('username', 'email')
@@ -51,14 +70,30 @@ class ReviewSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         required=True,
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ],
     )
-    email = serializers.EmailField()
+    email = serializers.EmailField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ],
+    )
 
     class Meta:
         model = User
         fields = ('username', 'email',
                   'first_name', 'last_name',
                   'role', 'bio')
+
+
+class UserMeSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('username', 'email',
+                  'first_name', 'last_name',
+                  'role', 'bio')
+        read_only_fields = ('role',)
+        model = User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -72,7 +107,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = '__all__'
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):

@@ -11,8 +11,8 @@ router_version_1.register(r'categories', CategoryViewSet)
 router_version_1.register(r'genres', GenreViewSet)
 router_version_1.register(r'titles', TitleViewSet)
 router_version_1.register(r'titles/(?P<title_id>\d+)/reviews',
-                ReviewViewSet, basename='review')
-router_version_1.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)' #review_ttl
+                ReviewViewSet, basename='reviews')
+router_version_1.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
                 r'/comments', CommentViewSet, basename='comments')
 router_version_1.register(r'users', UserViewSet)
 

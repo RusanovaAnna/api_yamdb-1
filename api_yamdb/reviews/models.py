@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -10,11 +11,10 @@ SYMBOLS_LIMIT = 15
 
 
 class User(AbstractUser):
-    
     # password = None
     last_login = None
     date_joined = None
-    role = models.CharField(max_length=20, )
+    role = models.CharField(max_length=20,)
     bio = models.TextField(blank=True)
     confirmation_code = models.TextField(blank=True, null=True)
 
