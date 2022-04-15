@@ -2,7 +2,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets, mixins
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets, mixins, filters
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -54,6 +55,8 @@ class CategoryViewSet(
     viewsets.GenericViewSet,
     ):
     queryset = Category.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
@@ -66,6 +69,8 @@ class GenreViewSet(
     viewsets.GenericViewSet,
     ):
     queryset = Genre.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
     serializer_class = GenreSerializer
     lookup_field = 'slug'
@@ -77,6 +82,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     ).order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('name', 'year', 'genre', 'category')
 
 
 class UserViewSet(
@@ -85,6 +92,7 @@ class UserViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
     ):
+    lookup_field = 'username'
     queryset = User.objects.all()
     permission_classes = (IsAdmin,)
     serializer_class = UserSerializer

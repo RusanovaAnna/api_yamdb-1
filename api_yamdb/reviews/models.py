@@ -45,7 +45,7 @@ class Title(models.Model):
         Category, on_delete=models.SET_NULL,
         null=True, related_name='titles')
     genre = models.ManyToManyField(Genre, through='GenreTitle')
-
+    
     def __str__(self):
         return self.name
 
