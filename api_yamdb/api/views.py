@@ -15,7 +15,7 @@ from .permissions import (IsAdminOrReadOnly,
                           IsAdminModeratorAuthorOrReadOnly, IsAdmin,)
 from .serializers import (CommentSerializer, ReviewSerializer, UserSerializer,
                           CategorySerializer, GenreSerializer, TitleSerializer, 
-                          GetTokenSerializer, GetConfirmationCode, UserMeSerializer,)
+                          GetTokenSerializer, GetConfirmationCode, MeSerializer,)
 
 
 @api_view(['POST'])
@@ -85,35 +85,30 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     # filterset_fields = ('name', 'year', 'genre', 'category') надо TitleFilter написать 
 
-
-class UserViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-    ):
-    lookup_field = 'username'
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = (IsAdmin,)
     serializer_class = UserSerializer
+    lookup_field = 'username'
+    pagination_class = UserPagination
 
-    @action(methods=['get','patch',],
-            detail=False,
-            url_path="me",
-            permission_classes=[IsAuthenticated]
-        )
-    def me(self, request):
-        user=request.user
-        if request.method == 'GET':
-            serializer = UserMeSerializer(user)
+
+class MeView(views.APIView):
+
+    @permission_classes([IsAuthenticated],)
+    def get(self, request):
+        user = get_object_or_404(User, username=request.user)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @permission_classes([IsAuthenticated],)
+    def patch(self, request):
+        user = get_object_or_404(User, username=request.user)
+        serializer = MeSerializer(user, request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        if request.method == 'PATCH':
-            serializer = UserMeSerializer(user, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

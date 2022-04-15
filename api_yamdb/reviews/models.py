@@ -9,6 +9,7 @@ MAX_SCORE = 10
 MIN_SCORE = 1
 SYMBOLS_LIMIT = 15
 
+CHOICES = ('admin', 'moderator', 'user')
 
 class User(AbstractUser):
     # password = None
