@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -9,13 +10,16 @@ MIN_SCORE = 1
 SYMBOLS_LIMIT = 15
 
 CHOICES = ('admin', 'moderator', 'user')
+<<<<<<< HEAD
 
+=======
+>>>>>>> b7011c7f76b7ea4c0238f6d92959130bd5dc52b5
 
 class User(AbstractUser):
     # password = None
     last_login = None
     date_joined = None
-    role = models.CharField(max_length=20)
+    role = models.CharField(max_length=20,)
     bio = models.TextField(blank=True)
     confirmation_code = models.TextField(blank=True, null=True)
 
@@ -44,19 +48,19 @@ class Title(models.Model):
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
-        null=True, related_name='titles_cats')
+        null=True, related_name='titles')
     genre = models.ManyToManyField(Genre, through='GenreTitle')
-
+    
     def __str__(self):
         return self.name
 
 
 class Review(models.Model):
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='review_ttl')
+        Title, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='review_auth')
+        User, on_delete=models.CASCADE, related_name='reviews')
     score = models.PositiveSmallIntegerField(
         validators=[
             MaxValueValidator(MAX_SCORE),
@@ -84,10 +88,13 @@ class GenreTitle(models.Model):
 
 
 class Comment(models.Model):
-    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments')
     text = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comment_auth')
+        User, on_delete=models.CASCADE, related_name='comments')
     pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
