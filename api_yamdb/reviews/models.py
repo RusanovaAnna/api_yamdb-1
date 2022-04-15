@@ -10,10 +10,7 @@ MIN_SCORE = 1
 SYMBOLS_LIMIT = 15
 
 CHOICES = ('admin', 'moderator', 'user')
-<<<<<<< HEAD
 
-=======
->>>>>>> b7011c7f76b7ea4c0238f6d92959130bd5dc52b5
 
 class User(AbstractUser):
     # password = None
@@ -50,7 +47,7 @@ class Title(models.Model):
         Category, on_delete=models.SET_NULL,
         null=True, related_name='titles')
     genre = models.ManyToManyField(Genre, through='GenreTitle')
-    
+
     def __str__(self):
         return self.name
 
