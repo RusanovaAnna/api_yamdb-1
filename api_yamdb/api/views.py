@@ -83,7 +83,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'year', 'genre', 'category')
+    # filterset_fields = ('name', 'year', 'genre', 'category') надо TitleFilter написать 
 
 
 class UserViewSet(
