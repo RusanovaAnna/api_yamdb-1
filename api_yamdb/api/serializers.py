@@ -24,10 +24,13 @@ class GetConfirmationCode(serializers.ModelSerializer):
         ]
     )
 
-    def validate_username(self, val):
-        if 'me' in val.lower():
+    def validate_username(self, value):
+        if value == 'me':
             raise serializers.ValidationError()
-        return val
+        return value
+        #if 'me' in val.lower():
+        #    raise serializers.ValidationError()
+        #return val
         #user = User.query.filter_by(username='me').first()
         #if user:
         #    raise serializers.ValidationError()
