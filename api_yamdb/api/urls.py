@@ -22,5 +22,5 @@ urlpatterns = [
     path('v1/auth/token/', get_token, name='token_obtain_pair'),
     path('v1/auth/signup/', get_confirmation_code, name='get_conf_code'),
     path('v1/users/me/', MeView.as_view()),
-    path('v1/', include(router_version_1.urls)),
+    path('v1/', include(router_version_1.urls))
 ]

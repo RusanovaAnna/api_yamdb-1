@@ -21,7 +21,7 @@ class IsAdminModeratorAuthorOrReadOnly(
         return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated)
 
-    def has_obj_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj):
         return (request.method in permissions.SAFE_METHODS
                 or request.user.role == 'admin'
                 or request.user.role == 'moderator'

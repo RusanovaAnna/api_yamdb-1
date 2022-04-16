@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -19,6 +18,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=20,)
     bio = models.TextField(blank=True)
     confirmation_code = models.TextField(blank=True, null=True)
+
 
 
 class Genre(models.Model):
@@ -47,6 +47,10 @@ class Title(models.Model):
         Category, on_delete=models.SET_NULL,
         null=True, related_name='titles')
     genre = models.ManyToManyField(Genre, through='GenreTitle')
+    rating = models.IntegerField(
+        null=True,
+        default=None
+    )
 
     def __str__(self):
         return self.name
@@ -66,6 +70,17 @@ class Review(models.Model):
     )
     pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
+<<<<<<< HEAD
+=======
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='title_author'
+            ),
+        ]
+
+>>>>>>> 5540f07e3547e71a69caf8df05b3ae94d44d9a2f
     def __str__(self):
         return self.text[:SYMBOLS_LIMIT]
 
