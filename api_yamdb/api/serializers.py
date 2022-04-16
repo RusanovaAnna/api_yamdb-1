@@ -58,8 +58,9 @@ class CommentSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
         slug_field='name',
-        read_only=True,
-    )
+        read_only=True, default=serializers.CurrentUserDefault())
+
+    title = serializers.HiddenField(default=0)
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -68,13 +69,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
-        #fields = ('id', 'text', 'author', 'score', 'pub_date')
 
-    #validators = [
-        #UniqueTogetherValidator(
-            #queryset=Review.objects.all(), fields=('title', 'author')
-        #)
-    #]
 
 
 class UserSerializer(serializers.ModelSerializer):
