@@ -73,7 +73,8 @@ class Review(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'author'], name='title_author'
+                fields=['title', 'author'],
+                name='title_author'
             ),
         ]
 
