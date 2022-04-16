@@ -20,7 +20,6 @@ class User(AbstractUser):
     confirmation_code = models.TextField(blank=True, null=True)
 
 
-
 class Genre(models.Model):
     name = models.CharField(max_length=20)
     slug = models.SlugField(unique=True)
@@ -70,8 +69,6 @@ class Review(models.Model):
     )
     pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
-<<<<<<< HEAD
-=======
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -80,7 +77,6 @@ class Review(models.Model):
             ),
         ]
 
->>>>>>> 5540f07e3547e71a69caf8df05b3ae94d44d9a2f
     def __str__(self):
         return self.text[:SYMBOLS_LIMIT]
 

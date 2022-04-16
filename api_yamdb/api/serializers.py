@@ -61,7 +61,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
-    
+
     def validate(self, data):
         title_id = self.context['view'].kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)
@@ -75,10 +75,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
-<<<<<<< HEAD
-
-=======
->>>>>>> 5540f07e3547e71a69caf8df05b3ae94d44d9a2f
 
 
 class UserSerializer(serializers.ModelSerializer):
