@@ -72,12 +72,17 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        required=True, max_length=150, validators=[
-            UniqueValidator(queryset=User.objects.all())])
+        required=True,
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ],
+    )
     email = serializers.EmailField(
-        required=True, max_length=254, validators=[
-            UniqueValidator(queryset=User.objects.all())])
-    role = serializers.ChoiceField(choices=CHOICES, default='user')
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ],
+    )
+
     class Meta:
         model = User
         fields = ('username', 'email',
@@ -85,13 +90,15 @@ class UserSerializer(serializers.ModelSerializer):
                   'role', 'bio')
 
 
-class MeSerializer(serializers.ModelSerializer):
+class UserMeSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = User
         fields = ('username', 'email',
                   'first_name', 'last_name',
                   'role', 'bio')
         read_only_fields = ('role',)
+        model = User
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
