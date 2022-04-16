@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -11,6 +10,7 @@ SYMBOLS_LIMIT = 15
 
 CHOICES = ('admin', 'moderator', 'user')
 
+
 class User(AbstractUser):
     # password = None
     last_login = None
@@ -18,6 +18,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=20,)
     bio = models.TextField(blank=True)
     confirmation_code = models.TextField(blank=True, null=True)
+
 
 
 class Genre(models.Model):
@@ -46,7 +47,11 @@ class Title(models.Model):
         Category, on_delete=models.SET_NULL,
         null=True, related_name='titles')
     genre = models.ManyToManyField(Genre, through='GenreTitle')
-    
+    rating = models.IntegerField(
+        null=True,
+        default=None
+    )
+
     def __str__(self):
         return self.name
 
@@ -68,7 +73,8 @@ class Review(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'author'], name='title_author')
+                fields=['title', 'author'], name='title_author'
+            ),
         ]
 
     def __str__(self):

@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from reviews.models import Comment, Review, User, Category, Title, Genre, CHOICES
+from reviews.models import (
+    Comment, Review, User, Category, Title, Genre, CHOICES)
 
 
 class GetTokenSerializer(serializers.ModelSerializer):
@@ -72,16 +72,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        required=True,
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ],
-    )
+        required=True, max_length=150, validators=[
+            UniqueValidator(queryset=User.objects.all())])
     email = serializers.EmailField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ],
-    )
+        required=True, max_length=254, validators=[
+            UniqueValidator(queryset=User.objects.all())])
+    role = serializers.ChoiceField(choices=CHOICES, default='user')
 
     class Meta:
         model = User
@@ -90,15 +86,13 @@ class UserSerializer(serializers.ModelSerializer):
                   'role', 'bio')
 
 
-class UserMeSerializer(serializers.ModelSerializer):
-
+class MeSerializer(serializers.ModelSerializer):
     class Meta:
+        model = User
         fields = ('username', 'email',
                   'first_name', 'last_name',
                   'role', 'bio')
         read_only_fields = ('role',)
-        model = User
-
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -122,6 +116,21 @@ class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug', queryset=Category.objects.all()
     )
+    rating = serializers.IntegerField(
+        source='reviews__score__avg', read_only=True
+    )
+
+    class Meta:
+        model = Title
+        fields = '__all__'
+
+
+class ReadTitleSerializer(serializers.ModelSerializer):
+    rating = serializers.IntegerField(
+        source='reviews__score__avg', read_only=True
+    )
+    genre = GenreSerializer(many=True)
+    category = CategorySerializer()
 
     class Meta:
         model = Title
