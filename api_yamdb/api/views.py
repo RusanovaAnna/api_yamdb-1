@@ -1,4 +1,4 @@
-# from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
@@ -46,7 +46,7 @@ def get_token(request):
         if serializer.is_valid():
             user = get_object_or_404(
                 User, username=serializer.data['username'])
-            token = AccessToken.for_user(user)
+            token = default_token_generator.make_token(user)
             return Response({'token': str(token)}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
