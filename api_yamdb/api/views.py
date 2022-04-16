@@ -7,6 +7,7 @@ from rest_framework import status, viewsets, mixins, filters, views
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Genre, Review, Title, User
 from .permissions import (IsAdminOrReadOnly,
@@ -45,8 +46,8 @@ def get_token(request):
         if serializer.is_valid():
             user = get_object_or_404(
                 User, username=serializer.data['username'])
-            token = default_token_generator.make_token(user)
-            return Response({'token': token}, status=status.HTTP_200_OK)
+            token = AccessToken.for_user(user)
+            return Response({'token': str(token)}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
