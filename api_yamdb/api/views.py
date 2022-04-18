@@ -8,7 +8,7 @@ from rest_framework import status, viewsets, mixins, filters, views
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-# from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Genre, Review, Title, User
 from .permissions import (IsAdminOrReadOnly,
@@ -55,7 +55,7 @@ def get_token(request):
             confirmation_code = serializer.validated_data.get(
                 'confirmation_code')
             if default_token_generator.check_token(user, confirmation_code):
-                token = default_token_generator.make_token(user)
+                token = AccessToken.for_user(user)
                 return Response(
                     {'token': str(token)}, status=status.HTTP_200_OK)
             else:
