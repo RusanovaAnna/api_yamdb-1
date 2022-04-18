@@ -1,8 +1,7 @@
-import datetime
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 
 MAX_SCORE = 10
 MIN_SCORE = 1
@@ -12,12 +11,11 @@ CHOICES = ('admin', 'moderator', 'user')
 
 
 class User(AbstractUser):
-    # password = None
-    last_login = None
-    date_joined = None
-    role = models.CharField(max_length=20,)
-    bio = models.TextField(blank=True)
-    confirmation_code = models.TextField(blank=True, null=True)
+    last_login = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    role = models.CharField(verbose_name='Роль', max_length=20)
+    bio = models.TextField(verbose_name='Биография', blank=True)
+    # confirmation_code = models.TextField(blank=True, null=True)
 
 
 class Genre(models.Model):
@@ -39,7 +37,7 @@ class Category(models.Model):
 class Title(models.Model):
     name = models.CharField(max_length=150)
     year = models.PositiveSmallIntegerField(
-        validators=[MaxValueValidator(datetime.datetime.now().year)]
+        validators=[MaxValueValidator(timezone.now().year)]
     )
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
