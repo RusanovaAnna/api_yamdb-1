@@ -61,7 +61,7 @@ python3 manage.py runserver
 
 
 
-Message Русанова Анна
+
 
 
 
