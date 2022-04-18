@@ -27,7 +27,10 @@ def get_confirmation_code(request):
     if request.method == 'POST':
         serializer = GetConfirmationCode(data=request.data)
         if serializer.is_valid():
-            confirmation_code = get_random_string(length=64)
+            serializer.save()
+            username = serializer.validated_data.get('username')
+            user = get_object_or_404(User, username=username)
+            confirmation_code = default_token_generator.make_token(user)
             send_mail(
                 'Title: Please, use it code for generate token',
                 f'{confirmation_code}',
@@ -35,7 +38,6 @@ def get_confirmation_code(request):
                 [request.data['email']],
                 fail_silently=False,
             )
-            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
