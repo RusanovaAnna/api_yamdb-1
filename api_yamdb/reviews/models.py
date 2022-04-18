@@ -11,11 +11,13 @@ CHOICES = ('admin', 'moderator', 'user')
 
 
 class User(AbstractUser):
-    last_login = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    date_joined = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     role = models.CharField(verbose_name='Роль', max_length=20)
     bio = models.TextField(verbose_name='Биография', blank=True)
-    # confirmation_code = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['role']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
 
 class Genre(models.Model):
