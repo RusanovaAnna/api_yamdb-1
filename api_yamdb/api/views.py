@@ -17,6 +17,8 @@ from .serializers import (CommentSerializer, ReviewSerializer, UserSerializer,
                           MeSerializer, ReadTitleSerializer)
 from .pagination import UserPagination
 from .filtres import TitleFilter
+from .mixins import MixinsViewSet
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 @api_view(['POST'])
@@ -45,17 +47,12 @@ def get_token(request):
         if serializer.is_valid():
             user = get_object_or_404(
                 User, username=serializer.data['username'])
-            token = default_token_generator.make_token(user)
-            return Response({'token': token}, status=status.HTTP_200_OK)
+            token = AccessToken.for_user(user)
+            return Response({"token": str(token)}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class CategoryViewSet(MixinsViewSet):
     queryset = Category.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -64,12 +61,7 @@ class CategoryViewSet(
     lookup_field = 'slug'
 
 
-class GenreViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class GenreViewSet(MixinsViewSet):
     queryset = Genre.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
