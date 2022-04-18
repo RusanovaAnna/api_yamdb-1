@@ -7,7 +7,9 @@ from reviews.models import (
     Comment, Review, User, Category, Title, Genre, CHOICES)
 
 
-class GetTokenSerializer(serializers.ModelSerializer):
+class GetTokenSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, max_length=100)
+    confirmation_code = serializers.CharField(required=True, max_length=100)
 
     class Meta:
         fields = ('username', 'confirmation_code')

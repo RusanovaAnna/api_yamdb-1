@@ -1,13 +1,14 @@
-# from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.crypto import get_random_string
 from rest_framework import status, viewsets, mixins, filters, views
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken
+# from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Genre, Review, Title, User
 from .permissions import (IsAdminOrReadOnly,
@@ -25,10 +26,11 @@ from .filtres import TitleFilter
 def get_confirmation_code(request):
     if request.method == 'POST':
         serializer = GetConfirmationCode(data=request.data)
-        if serializer.is_valid() and request.data['username'] != 'me':
+        if serializer.is_valid():
+            confirmation_code = get_random_string(length=64)
             send_mail(
-                'Title: your confirmation_code',
-                'bgfhbgrg7896gwuvfwbfubv',
+                'Title: Please, use it code for generate token',
+                f'{confirmation_code}',
                 'artem@gmail.com',
                 [request.data['email']],
                 fail_silently=False,
@@ -44,10 +46,21 @@ def get_token(request):
     if request.method == 'POST':
         serializer = GetTokenSerializer(data=request.data)
         if serializer.is_valid():
-            user = get_object_or_404(
-                User, username=serializer.data['username'])
-            token = AccessToken.for_user(user)
-            return Response({'token': str(token)}, status=status.HTTP_200_OK)
+            try:
+                user = User.objects.get(
+                    username=serializer.validated_data.get('username'))
+            except User.DoesNotExist:
+                return Response(
+                    serializer.errors, status=status.HTTP_404_NOT_FOUND)
+            confirmation_code = serializer.validated_data.get(
+                'confirmation_code')
+            if default_token_generator.check_token(user, confirmation_code):
+                token = default_token_generator.make_token(user)
+                return Response(
+                    {'token': str(token)}, status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
