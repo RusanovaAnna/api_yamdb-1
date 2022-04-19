@@ -4,7 +4,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 
 from reviews.models import (
-    Comment, Review, User, Category, Title, Genre, CHOICES)
+    Comment, Review, User, Category, Title, Genre)
 
 
 class GetTokenSerializer(serializers.Serializer):
@@ -86,7 +86,8 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True, max_length=254, validators=[
             UniqueValidator(queryset=User.objects.all())])
-    role = serializers.ChoiceField(choices=CHOICES, default='user')
+    role = serializers.ChoiceField(
+        choices=User.ROLE_CHOICES, default=User.USER)
 
     class Meta:
         model = User
