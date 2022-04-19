@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
+from api_yamdb.settings import EMAIL_ADMIN
 from reviews.models import Category, Genre, Review, Title, User
 from .permissions import (IsAdminOrReadOnly,
                           IsAdminModeratorAuthorOrReadOnly, IsAdmin,)
@@ -23,46 +24,32 @@ from .filtres import TitleFilter
 @api_view(['POST'])
 @permission_classes([AllowAny],)
 def get_confirmation_code(request):
-    if request.method == 'POST':
-        serializer = GetConfirmationCode(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            username = serializer.validated_data.get('username')
-            user = get_object_or_404(User, username=username)
-            confirmation_code = default_token_generator.make_token(user)
-            send_mail(
-                'Title: Please, use it code for generate token',
-                f'{confirmation_code}',
-                'artem@gmail.com',
-                [request.data['email']],
-                fail_silently=False,
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = GetConfirmationCode(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    username = serializer.validated_data.get('username')
+    user = get_object_or_404(User, username=username)
+    confirmation_code = default_token_generator.make_token(user)
+    send_mail(
+        'Title: Please, use it code for generate token',
+        f'{confirmation_code}',
+        EMAIL_ADMIN,
+        [serializer.validated_data['email']],
+        fail_silently=False,
+    )
+    return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny],)
 def get_token(request):
-    if request.method == 'POST':
-        serializer = GetTokenSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                user = User.objects.get(
-                    username=serializer.validated_data.get('username'))
-            except User.DoesNotExist:
-                return Response(
-                    serializer.errors, status=status.HTTP_404_NOT_FOUND)
-            confirmation_code = serializer.validated_data.get(
-                'confirmation_code')
-            if default_token_generator.check_token(user, confirmation_code):
-                token = AccessToken.for_user(user)
-                return Response(
-                    {'token': str(token)}, status=status.HTTP_200_OK)
-            else:
-                return Response(
-                    serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer = GetTokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = get_object_or_404(
+        User, username=serializer.validated_data.get('username'))
+    token = AccessToken.for_user(user)
+    return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(
@@ -125,31 +112,9 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         if request.method == 'PATCH':
             serializer = MeSerializer(user, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-"""
-class MeView(views.APIView):
-
-    @permission_classes([IsAuthenticated],)
-    def get(self, request):
-        user = get_object_or_404(User, username=request.user)
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @permission_classes([IsAuthenticated],)
-    def patch(self, request):
-        user = get_object_or_404(User, username=request.user)
-        serializer = MeSerializer(user, request.data, partial=True)
-        if serializer.is_valid():
+            serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

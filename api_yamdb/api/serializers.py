@@ -1,3 +1,4 @@
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -10,6 +11,15 @@ from reviews.models import (
 class GetTokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True, max_length=100)
     confirmation_code = serializers.CharField(required=True, max_length=100)
+
+    def validate(self, data):
+        username = data.get('username')
+        user = get_object_or_404(User, username=username)
+        confirmation_code = username = data.get('confirmation_code')
+
+        if not default_token_generator.check_token(user, confirmation_code):
+            raise serializers.ValidationError('Код неверен')
+        return data
 
     class Meta:
         fields = ('username', 'confirmation_code')
@@ -30,7 +40,7 @@ class GetConfirmationCode(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if value == 'me':
-            raise serializers.ValidationError()
+            raise serializers.ValidationError('Выберите другое имя')
         return value
 
     class Meta:
