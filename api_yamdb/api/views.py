@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets, mixins, filters
+from rest_framework import status, viewsets, filters
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -19,6 +19,8 @@ from .serializers import (CommentSerializer, ReviewSerializer, UserSerializer,
                           MeSerializer, ReadTitleSerializer)
 from .pagination import UserPagination
 from .filtres import TitleFilter
+from .mixins import MixinsViewSet
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 @api_view(['POST'])
@@ -52,12 +54,7 @@ def get_token(request):
     return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
 
-class CategoryViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class CategoryViewSet(MixinsViewSet):
     queryset = Category.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -66,12 +63,7 @@ class CategoryViewSet(
     lookup_field = 'slug'
 
 
-class GenreViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class GenreViewSet(MixinsViewSet):
     queryset = Genre.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)

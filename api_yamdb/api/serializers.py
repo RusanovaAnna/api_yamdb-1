@@ -1,11 +1,13 @@
 from django.contrib.auth.tokens import default_token_generator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 
 from reviews.models import (
-    Comment, Review, User, Category, Title, Genre)
+    Comment, Review, User, Category, Title, Genre, MAX_SCORE, MIN_SCORE
+)
 
 
 class GetTokenSerializer(serializers.Serializer):
@@ -73,6 +75,14 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
+    score = serializers.IntegerField(
+        validators=[
+            MaxValueValidator(
+                MAX_SCORE, 'Выберите значение от 1 до 10'),
+            MinValueValidator(
+                MIN_SCORE, 'Выберите значение от 1 до 10'),
+        ]
+    )
 
     def validate(self, data):
         title_id = self.context['view'].kwargs.get('title_id')
@@ -81,7 +91,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         author = request.user
         if request.method == 'POST':
             if Review.objects.filter(author=author, title=title).exists():
-                raise ValidationError()
+                raise ValidationError('Нельзя добавлять более одного'
+                                      'отзыва на произведение')
         return data
 
     class Meta:
@@ -135,9 +146,6 @@ class TitleSerializer(serializers.ModelSerializer):
     )
     category = serializers.SlugRelatedField(
         slug_field='slug', queryset=Category.objects.all()
-    )
-    rating = serializers.IntegerField(
-        source='reviews__score__avg', read_only=True
     )
 
     class Meta:
