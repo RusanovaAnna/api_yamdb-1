@@ -50,3 +50,12 @@ python3 manage.py migrate
 ```
 python3 manage.py runserver
 ```
+#### Примеры запросов для получения, создания и изменения отзывов и комментариев, а также для управления пользователями
+
+###### */api/v1/titles/*
+###### */api/v1/titles/{id}/*
+###### *api/v1/titles/{title_id}/reviews/*
+###### *api/v1/titles/{title_id}/reviews/{id}/*
+###### *api/v1/genres/*
+###### *api/v1/genres/{id}/*
+###### *api/v1/users/*

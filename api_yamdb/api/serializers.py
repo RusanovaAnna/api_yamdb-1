@@ -4,10 +4,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
-
+from reviews.validators import year_validator
 from reviews.models import (
-    Comment, Review, User, Category, Title, Genre, MAX_SCORE, MIN_SCORE
-)
+    Comment, Review, User, Category, Title, Genre, MAX_SCORE, MIN_SCORE)
 
 
 class GetTokenSerializer(serializers.Serializer):
@@ -147,6 +146,7 @@ class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug', queryset=Category.objects.all()
     )
+    year = serializers.IntegerField(validators=[year_validator],)
 
     class Meta:
         model = Title

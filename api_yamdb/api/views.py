@@ -26,7 +26,6 @@ from rest_framework_simplejwt.tokens import AccessToken
 @api_view(['POST'])
 @permission_classes([AllowAny],)
 def get_confirmation_code(request):
-
     serializer = GetConfirmationCode(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()

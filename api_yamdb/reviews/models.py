@@ -116,5 +116,9 @@ class Comment(models.Model):
         User, on_delete=models.CASCADE, related_name='comments')
     pub_date = models.DateTimeField(auto_now_add=True, db_index=True)
 
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
     def __str__(self):
         return self.text[:SYMBOLS_LIMIT]
