@@ -7,7 +7,9 @@ from reviews.models import (
     Comment, Review, User, Category, Title, Genre, CHOICES)
 
 
-class GetTokenSerializer(serializers.ModelSerializer):
+class GetTokenSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True, max_length=100)
+    confirmation_code = serializers.CharField(required=True, max_length=100)
 
     class Meta:
         fields = ('username', 'confirmation_code')
@@ -54,13 +56,14 @@ class CommentSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
         slug_field='name',
-        read_only=True,
-    )
+        read_only=True, default=serializers.CurrentUserDefault())
+
+    title = serializers.HiddenField(default=0)
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
     )
-    
+
     def validate(self, data):
         title_id = self.context['view'].kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)

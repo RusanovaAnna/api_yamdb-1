@@ -20,7 +20,6 @@ class User(AbstractUser):
     confirmation_code = models.TextField(blank=True, null=True)
 
 
-
 class Genre(models.Model):
     name = models.CharField(max_length=20)
     slug = models.SlugField(unique=True)
@@ -39,9 +38,7 @@ class Category(models.Model):
 
 class Title(models.Model):
     name = models.CharField(max_length=150)
-    year = models.PositiveSmallIntegerField(
-        validators=[MaxValueValidator(datetime.datetime.now().year)]
-    )
+    year = models.PositiveSmallIntegerField()
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,

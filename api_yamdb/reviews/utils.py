@@ -9,6 +9,7 @@ with open('static/data/genre_title.csv', 'r') as file:
     to_db = [(i['id'], i['genre_id'], i['title_id']) for i in dr]
 
 cur.executemany(
-    "INSERT INTO reviews_genretitle (id, genre_id, title_id) VALUES (?, ?, ?);", to_db)
+    "INSERT INTO reviews_genretitle(id,genre_id,title_id) VALUES (?, ?, ?);",
+    to_db)
 con.commit()
 con.close()
