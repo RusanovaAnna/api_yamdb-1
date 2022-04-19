@@ -3,8 +3,8 @@ from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets, filters, views
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status, viewsets, filters
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
@@ -107,7 +107,24 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     pagination_class = UserPagination
 
+    @action(detail=False,
+            methods=['get', 'patch', ],
+            permission_classes=(IsAuthenticated,))
+    def me(self, request):
+        user = get_object_or_404(User, username=request.user.username)
+        if request.method == 'GET':
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.method == 'PATCH':
+            serializer = MeSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+"""
 class MeView(views.APIView):
 
     @permission_classes([IsAuthenticated],)
@@ -124,6 +141,7 @@ class MeView(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+"""
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
