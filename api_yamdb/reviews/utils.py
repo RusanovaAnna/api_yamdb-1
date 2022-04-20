@@ -1,15 +1,14 @@
 import csv
-import sqlite3
+from sqlalchemy import create_engine, Table, MetaData
 
-con = sqlite3.connect('db.sqlite3')
-cur = con.cursor()
+engine = create_engine('sqlite:///db.sqlite3')
+metadata = MetaData()
+reviews_genre = Table(
+    'reviews_genre', metadata, autoload=True, autoload_with=engine)
+insert_query = reviews_genre.insert()
 
-with open('static/data/genre_title.csv', 'r') as file:
-    dr = csv.DictReader(file, delimiter=",")
-    to_db = [(i['id'], i['genre_id'], i['title_id']) for i in dr]
-
-cur.executemany(
-    "INSERT INTO reviews_genretitle(id,genre_id,title_id) VALUES (?, ?, ?);",
-    to_db)
-con.commit()
-con.close()
+with open('static/data/genre.csv', 'r', encoding="utf-8") as file:
+    csv_reader = csv.reader(file, delimiter=",")
+    engine.execute(
+        insert_query,
+        [{'id': row[0], 'name': row[1], 'slug': row[2]} for row in csv_reader])
