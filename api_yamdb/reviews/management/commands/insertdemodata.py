@@ -16,7 +16,6 @@ class Command(BaseCommand):
         engine_db = kwargs['engine_db']
         db1 = DATABASES['default']['NAME']
         engine = create_engine(str(engine_db) + ':////' + str(db1))
-        print(str(engine))
         metadata = MetaData()
         reviews_genre = Table(
             'reviews_genre', metadata, autoload=True, autoload_with=engine)
