@@ -4,9 +4,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
+from reviews.models import (MAX_SCORE, MIN_SCORE, Category, Comment, Genre,
+                            Review, Title, User)
 from reviews.validators import year_validator
-from reviews.models import (
-    Comment, Review, User, Category, Title, Genre, MAX_SCORE, MIN_SCORE)
 
 
 class GetTokenSerializer(serializers.Serializer):

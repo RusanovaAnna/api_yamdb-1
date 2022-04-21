@@ -3,24 +3,25 @@ from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets, filters
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+from reviews.models import Category, Genre, Review, Title, User
 
 from api_yamdb.settings import EMAIL_ADMIN
-from reviews.models import Category, Genre, Review, Title, User
-from .permissions import (IsAdminOrReadOnly,
-                          IsAdminModeratorAuthorOrReadOnly, IsAdmin,)
-from .serializers import (CommentSerializer, ReviewSerializer, UserSerializer,
-                          CategorySerializer, GenreSerializer, TitleSerializer,
-                          GetTokenSerializer, GetConfirmationCode,
-                          MeSerializer, ReadTitleSerializer)
-from .pagination import UserPagination
+
 from .filtres import TitleFilter
-from .mixins import MixinsViewSet
-from rest_framework_simplejwt.tokens import AccessToken
+from .mixins import ListCreateDestroyViewSet
+from .pagination import UserPagination
+from .permissions import (IsAdmin, IsAdminModeratorAuthorOrReadOnly,
+                          IsAdminOrReadOnly)
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, GetConfirmationCode,
+                          GetTokenSerializer, MeSerializer,
+                          ReadTitleSerializer, ReviewSerializer,
+                          TitleSerializer, UserSerializer)
 
 
 @api_view(['POST'])
@@ -53,7 +54,7 @@ def get_token(request):
     return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
 
-class CategoryViewSet(MixinsViewSet):
+class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -62,7 +63,7 @@ class CategoryViewSet(MixinsViewSet):
     lookup_field = 'slug'
 
 
-class GenreViewSet(MixinsViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
