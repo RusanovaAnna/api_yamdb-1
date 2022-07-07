@@ -59,3 +59,5 @@ python3 manage.py runserver
 ###### *api/v1/genres/*
 ###### *api/v1/genres/{id}/*
 ###### *api/v1/users/*
+
+Стек: Python, DRF, REST API, jwt-token
